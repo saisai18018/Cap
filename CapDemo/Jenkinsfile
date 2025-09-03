@@ -26,14 +26,15 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                dir("${PROJECT_DIR}") {
-                    echo "🧪 Running TestNG suite..."
-                    bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
+    		steps {
+        		dir("${PROJECT_DIR}") {
+            	echo "🧪 Running only login/cart tests..."
+            	bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+            	junit 'target/surefire-reports/*.xml'
+        		}
+    		}
+		}
+
 
         stage('Run App') {
             steps {
