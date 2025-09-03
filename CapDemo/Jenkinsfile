@@ -17,14 +17,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Running Maven clean and build..."
-                sh 'mvn clean install -DskipTests'
+                bat 'mvn clean install -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
                 echo "Running TestNG suite..."
-                sh 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+                bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
             }
         }
 
