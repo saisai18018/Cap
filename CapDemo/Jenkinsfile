@@ -36,9 +36,25 @@ pipeline {
         stage('Archive Reports') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    echo "📂 Archiving test reports..."
+                    echo "📂 Archiving JUnit XML reports..."
                     junit 'target/surefire-reports/*.xml'
                     archiveArtifacts artifacts: 'target/surefire-reports/*', fingerprint: true
+                }
+            }
+        }
+
+        stage('Publish TestNG HTML Report') {
+            steps {
+                dir("${PROJECT_DIR}") {
+                    echo "🌐 Publishing TestNG HTML report..."
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'test-output',
+                        reportFiles: 'index.html',
+                        reportName: 'TestNG Report'
+                    ])
                 }
             }
         }
@@ -47,11 +63,9 @@ pipeline {
     post {
         success {
             echo "✅ Build SUCCESSFUL!"
-            archiveArtifacts artifacts: 'CapDemo/reports/**', fingerprint: true
         }
         failure {
             echo "❌ Build FAILED! Please check logs and reports."
-            archiveArtifacts artifacts: 'CapDemo/reports/**', fingerprint: true
         }
         always {
             echo "Build finished with status: ${currentBuild.currentResult}"
