@@ -5,6 +5,7 @@ pipeline {
         GIT_REPO = 'https://github.com/saisai18018/Cap.git'
         BRANCH = 'main'
         PROJECT_DIR = 'CapDemo'
+        APP_ENV = 'dev'
     }
 
     stages {
@@ -18,8 +19,8 @@ pipeline {
         stage('Build') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    echo "⚙️ Running Maven clean and build (with tests)..."
-                    bat 'mvn clean install'
+                    echo "⚙️ Building project (skip tests here)..."
+                    bat 'mvn clean install -DskipTests'
                 }
             }
         }
@@ -29,33 +30,23 @@ pipeline {
                 dir("${PROJECT_DIR}") {
                     echo "🧪 Running TestNG suite..."
                     bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-                }
-            }
-        }
-
-        stage('Archive Reports') {
-            steps {
-                dir("${PROJECT_DIR}") {
-                    echo "📂 Archiving JUnit XML reports..."
                     junit 'target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: 'target/surefire-reports/*', fingerprint: true
                 }
             }
         }
 
-        stage('Publish TestNG HTML Report') {
+        stage('Run App') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    echo "🌐 Publishing TestNG HTML report..."
-                    publishHTML(target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'test-output',
-                        reportFiles: 'index.html',
-                        reportName: 'TestNG Report'
-                    ])
+                    echo "🚀 Running the Java App..."
+                    bat 'java -cp target/CapDemo-1.0-SNAPSHOT.jar com.example.App'
                 }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "📦 Deploying to ${env.APP_ENV} environment..."
             }
         }
     }
