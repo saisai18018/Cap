@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = 'https://github.com/saisai18018/CapstoneDemo.git'
+        BRANCH = 'main'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Checking out code from GitHub..."
+                git branch: "${BRANCH}", url: "${GIT_REPO}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Running Maven clean and build..."
+                sh 'mvn clean install -DskipTests'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "Running TestNG suite..."
+                sh 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+            }
+        }
+
+        stage('Archive Reports') {
+            steps {
+                echo "Archiving test reports..."
+                junit 'target/surefire-reports/*.xml'
+                archiveArtifacts artifacts: 'target/surefire-reports/*', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build SUCCESSFUL!"
+            archiveArtifacts artifacts: 'reports/**', fingerprint: true
+        }
+        failure {
+            echo "❌ Build FAILED! Please check logs and reports."
+            archiveArtifacts artifacts: 'reports/**', fingerprint: true
+        }
+        always {
+            echo "Build finished with status: ${currentBuild.currentResult}"
+        }
+    }
+}
