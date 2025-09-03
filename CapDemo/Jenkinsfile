@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = 'https://github.com/saisai18018/CapstoneDemo.git'
+        GIT_REPO = 'https://github.com/saisai18018/Cap.git'
         BRANCH = 'main'
     }
 
