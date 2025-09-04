@@ -8,8 +8,8 @@
 
     <test thread-count="5" name="Functional Tests">
         <classes>
-            <class name="tests.CartTest" />
             <class name="tests.LoginTest" />
+            <class name="tests.CartTest" />
         </classes>
     </test>
 
