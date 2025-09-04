@@ -13,24 +13,16 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                dir('CapDemo') {
-                    echo 'Building the project...'
-                    bat 'mvn clean install'
-                }
-            }
-        }
+        stage('Build & Test') {
+    		steps {
+        		dir('CapDemo') {
+            	echo 'Building and running tests...'
+            	bat 'mvn clean install'
+            	junit 'target/surefire-reports/*.xml'
+        		}
+    		}
+		}
 
-        stage('Test') {
-            steps {
-                dir('CapDemo') {
-                    echo 'Running tests...'
-                    bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
 
         stage('Run App') {
             steps {
