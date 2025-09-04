@@ -2,64 +2,52 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = 'https://github.com/saisai18018/Cap.git'
-        BRANCH = 'main'
-        PROJECT_DIR = 'CapDemo'
         APP_ENV = 'dev'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone') {
             steps {
-                echo "📥 Checking out code from GitHub..."
-                git branch: "${BRANCH}", url: "${GIT_REPO}"
+                echo 'Cloning repository...'
+                git branch: 'main', url: 'https://github.com/saisai18018/Cap.git'
             }
         }
 
         stage('Build') {
             steps {
-                dir("${PROJECT_DIR}") {
-                    echo "⚙️ Building project (skip tests here)..."
-                    bat 'mvn clean install -DskipTests'
-                }
+                echo 'Building the project...'
+                bat 'mvn clean install -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                dir("${PROJECT_DIR}") {
-                    echo "🧪 Running only login/cart tests..."
-                    bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-                }
+                echo 'Running tests...'
+                bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+                junit '**/target/surefire-reports/*.xml'  // publish test results
             }
         }
 
         stage('Run App') {
             steps {
-                dir("${PROJECT_DIR}") {
-                    echo "🚀 Running the Java App..."
-                    // Fix jar name to match actual build
-                    bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
-                }
+                echo 'Running the Java App...'
+                bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "📦 Deploying to ${env.APP_ENV} environment..."
+                echo "Deploying to ${env.APP_ENV} environment..."
             }
         }
     }
 
     post {
         success {
-            echo "✅ Build SUCCESSFUL!"
+            echo 'Pipeline succeeded!'
         }
         failure {
-            echo "❌ Build FAILED! Please check logs and reports."
-        }
-        always {
-            echo "Build finished with status: ${currentBuild.currentResult}"
+            echo 'Pipeline failed! Please check logs.'
         }
     }
 }
