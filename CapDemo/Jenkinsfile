@@ -32,13 +32,18 @@ pipeline {
                     bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
                 }
             }
+            post {
+                always {
+                    // Publish TestNG results to Jenkins
+                    publishTestNGResults testResultsPattern: '**/target/surefire-reports/testng-results.xml'
+                }
+            }
         }
 
         stage('Run App') {
             steps {
                 dir("${PROJECT_DIR}") {
                     echo "🚀 Running the Java App..."
-                    // Fix jar name to match actual build
                     bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
                 }
             }
