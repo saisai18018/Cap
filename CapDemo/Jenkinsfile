@@ -36,7 +36,7 @@ pipeline {
             steps {
                 echo 'Publishing ExtentReports in Jenkins...'
                 publishHTML([
-                    reportDir: 'CapDemo/reports/extentreports',  // ExtentReports folder
+                    reportDir: 'CapDemo/reports/ExtentReports',  // ExtentReports folder
                     reportFiles: 'index.html',                   // main report file
                     reportName: 'Extent Report',                 // name shown in Jenkins
                     keepAll: true,
