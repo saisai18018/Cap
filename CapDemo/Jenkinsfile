@@ -15,23 +15,29 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building the project...'
-                bat 'mvn clean install -DskipTests'
+                dir('CapDemo') {
+                    echo 'Building the project...'
+                    bat 'mvn clean install'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
-                bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-                junit '**/target/surefire-reports/*.xml'  // publish test results
+                dir('CapDemo') {
+                    echo 'Running tests...'
+                    bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+                    junit '**/target/surefire-reports/*.xml'
+                }
             }
         }
 
         stage('Run App') {
             steps {
-                echo 'Running the Java App...'
-                bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
+                dir('CapDemo') {
+                    echo 'Running the Java App...'
+                    bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
+                }
             }
         }
 
