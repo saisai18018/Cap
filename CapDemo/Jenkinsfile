@@ -18,8 +18,7 @@ pipeline {
                 dir('CapDemo') {
                     echo 'Building the project and running tests...'
                     bat 'mvn clean install'
-                    // Publish TestNG results in Jenkins (JUnit format)
-                    junit 'target/surefire-reports/TEST-*.xml'
+                    echo 'Tests executed. ExtentReports generated in reports/extentreports.'
                 }
             }
         }
@@ -30,6 +29,20 @@ pipeline {
                     echo 'Running the Java App...'
                     bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
                 }
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                echo 'Publishing ExtentReports in Jenkins...'
+                publishHTML([
+                    reportDir: 'CapDemo/reports/extentreports',  // ExtentReports folder
+                    reportFiles: 'index.html',                   // main report file
+                    reportName: 'Extent Report',                 // name shown in Jenkins
+                    keepAll: true,
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true                 // link always points to latest report
+                ])
             }
         }
 
@@ -45,7 +58,7 @@ pipeline {
             echo 'Pipeline succeeded!'
         }
         failure {
-            echo 'Pipeline failed! Please check logs.'
+            echo 'Pipeline failed! Please check logs and ExtentReport.'
         }
     }
 }

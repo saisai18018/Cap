@@ -89,15 +89,14 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
+					<!-- Run TestNG suite -->
 					<suiteXmlFiles>
 						<suiteXmlFile>testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
-					<!-- Make Surefire generate JUnit XML reports for Jenkins -->
-					<reportsDirectory>
-						${project.build.directory}/surefire-reports</reportsDirectory>
+					<!-- Generate reports so Jenkins can pick up -->
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 </project>
