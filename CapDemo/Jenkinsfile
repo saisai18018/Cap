@@ -26,21 +26,20 @@ pipeline {
         }
 
         stage('Test') {
-    		steps {
-        		dir("${PROJECT_DIR}") {
-            	echo "🧪 Running only login/cart tests..."
-            	bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
-            	junit 'target/surefire-reports/*.xml'
-        		}
-    		}
-		}
-
+            steps {
+                dir("${PROJECT_DIR}") {
+                    echo "🧪 Running only login/cart tests..."
+                    bat 'mvn test -Dsurefire.suiteXmlFiles=testng.xml'
+                }
+            }
+        }
 
         stage('Run App') {
             steps {
                 dir("${PROJECT_DIR}") {
                     echo "🚀 Running the Java App..."
-                    bat 'java -cp target/CapDemo-1.0-SNAPSHOT.jar com.example.App'
+                    // Fix jar name to match actual build
+                    bat 'java -cp target/CapDemo-0.0.1-SNAPSHOT.jar com.example.App'
                 }
             }
         }
